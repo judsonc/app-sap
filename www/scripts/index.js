@@ -53,7 +53,7 @@ function getAllSensors() {
     getAllLuzes();
     $.ajax({
         type: "POST",
-        url: 'http://' + iplab + '/pds/getSensores.php',
+        url: 'http://' + iplab + '/sap/getSensores.php',
         crossDomain: true,
         cache: false,
         success: function (data) {
@@ -71,9 +71,7 @@ function getAllSensors() {
         timeout: 5000,
         error: function () {
             alert("Falha na conexão!\nTente novamente.");
-            toggle("header");
-            toggle("screenIndex");
-            formSubmitLogin();
+            document.location.href = 'index.html';
         }
     });
 }
@@ -81,27 +79,20 @@ function getAllSensors() {
 function getAllLuzes() {
     $.ajax({
         type: "POST",
-        url: 'http://' + iplab + '/pds/getLuzes.php',
+        url: 'http://' + iplab + '/sap/getLuzes.php',
         crossDomain: true,
         cache: false,
         success: function (data) {
             var data = $.parseJSON(data);
             $("#allLuzes").html("");
             $.each(data, function (i, field) {
+                field.LOG_STATUS = (field.LOG_STATUS == 1) ? 'on' : '';
                 $("#allLuzes").append(
-                    "<tr class=\"" + setLuz(field.LOG_STATUS) + "\"><td>" + field.LOG_IDLUZ + "</td><td>" + field.LOG_VALOR + "</td></tr>"
+                    "<tr class=\"" + field.LOG_STATUS + "\"><td>" + field.LOG_IDLUZ + "</td><td>" + field.LOG_VALOR + "</td></tr>"
                 );
             });
         },
     });
-}
-/* Setar luz ativa */
-function setLuz(status) {
-    status = (status == 1) ? 'on' : '';
-    return status;
-    setTimeout(function () {
-        setLuz(0);
-    }, 1000);
 }
 /* Processar formulario */
 function formSubmitLogin() {
