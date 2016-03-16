@@ -66,13 +66,9 @@ function getAllSensors() {
             });
             setTimeout(function () {
                 getAllSensors();
-            }, 3000);
+            }, 2000);
         },
         timeout: 5000,
-        error: function () {
-            alert("Falha na conexão!\nTente novamente.");
-            document.location.href = 'index.html';
-        }
     });
 }
 /* Get Luzes */
@@ -91,6 +87,10 @@ function getAllLuzes() {
                     "<tr class=\"" + field.LOG_STATUS + "\"><td>" + field.LOG_IDLUZ + "</td><td>" + field.LOG_VALOR + "</td></tr>"
                 );
             });
+        },
+        error: function () {
+            alert("Falha na conexão!\nTente novamente.");
+            document.location.href = 'index.html';
         },
     });
 }
