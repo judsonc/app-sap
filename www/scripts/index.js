@@ -13,10 +13,12 @@
 
     function onPause() {
         // TODO: This application has been suspended. Save application state here.
+        checkConnection();
     };
 
     function onResume() {
         // TODO: This application has been reactivated. Restore application state here.
+        checkConnection();
     };
 })();
 /* Variáveis globais */
@@ -32,6 +34,16 @@ $(document).ready(function () {
 /* testar conexão */
 document.addEventListener("deviceready", onDeviceReady, false);
 function onDeviceReady() {
+    var myDB = window.sqlitePlugin.openDatabase({ name: "mySQLite.db" });
+    myDB.transaction(function (transaction) {
+        transaction.executeSql('CREATE TABLE IF NOT EXISTS phonegap_pro (id integer primary key, ip text)', [],
+        function (tx, result) {
+            alert("Table created successfully");
+        },
+        function (error) {
+            alert("Error occurred while creating the table.");
+        });
+    });
     checkConnection();
 }
 function checkConnection() {
@@ -97,6 +109,15 @@ function getAllLuzes() {
 /* Processar formulario */
 function formSubmitLogin() {
     toggle('screenLogin');
+    var len = 0;
+    myDB.transaction(function (transaction) {
+        transaction.executeSql('SELECT * FROM phonegap_pro', [], function (tx, results) {
+            len = results.rows.length, i;
+            var last_item = len - 1;
+            alert(results.rows.item(last_item).ip);
+            $('input[name=iplab]').val(results.rows.item(last_item).ip);
+        }, null);
+    });
     $('#formLogin').submit(function () {
         iplab = $('input[name=iplab]').val();
         if (iplab == '') {
@@ -106,6 +127,19 @@ function formSubmitLogin() {
             getAllSensors();
             toggle("header");
             toggle("screenIndex");
+        }
+
+        if (len == 0) {
+            myDB.transaction(function (transaction) {
+                var executeQuery = "INSERT INTO phonegap_pro (ip) VALUES (?)";
+                transaction.executeSql(executeQuery, [iplab],
+                function (tx, result) {
+                    alert('Inserted');
+                },
+                function (error) {
+                    alert('Error occurred');
+                });
+            });
         }
         return false;
     });
