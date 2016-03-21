@@ -9,6 +9,18 @@
         document.addEventListener('resume', onResume.bind(this), false);
 
         // TODO: Cordova has been loaded. Perform any initialization that requires Cordova here.
+
+        var myDB = window.sqlitePlugin.openDatabase({ name: "mySQLite.db" });
+        myDB.transaction(function (transaction) {
+            transaction.executeSql('CREATE TABLE IF NOT EXISTS phonegap_pro (id integer primary key, ip text)', [],
+            function (tx, result) {
+                alert("Table created successfully");
+            },
+            function (error) {
+                alert("Error occurred while creating the table.");
+            });
+        });
+        checkConnection();
     };
 
     function onPause() {
@@ -32,20 +44,6 @@ $(document).ready(function () {
     });
 });
 /* testar conexão */
-document.addEventListener("deviceready", onDeviceReady, false);
-function onDeviceReady() {
-    var myDB = window.sqlitePlugin.openDatabase({ name: "mySQLite.db" });
-    myDB.transaction(function (transaction) {
-        transaction.executeSql('CREATE TABLE IF NOT EXISTS phonegap_pro (id integer primary key, ip text)', [],
-        function (tx, result) {
-            alert("Table created successfully");
-        },
-        function (error) {
-            alert("Error occurred while creating the table.");
-        });
-    });
-    checkConnection();
-}
 function checkConnection() {
     if (navigator.network.connection.type == Connection.NONE) {
         alert('Você está desconectado!');
