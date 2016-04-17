@@ -10,10 +10,8 @@
 
         // TODO: Cordova has been loaded. Perform any initialization that requires Cordova here.
 
-        var dbSize = 3 * 1024 * 1024; // 3MB 
-        db = openDatabase("db.sql", "", "dbmanager", dbSize, function () {
-            alert('db successfully opened or created');
-        });
+        var dbSize = 3 * 1024 * 1024; // 3MB
+        db = openDatabase("db.sql", "", "dbmanager", dbSize);
         db.transaction(function (tx) {
             tx.executeSql("CREATE TABLE IF NOT EXISTS tab_ip (id INTEGER, ip TEXT)", []);
             tx.executeSql('SELECT * FROM tab_ip LIMIT 1', [], function (tx, res) {
