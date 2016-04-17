@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="utf-8">
     <meta name="format-detection" content="telephone=no" />
@@ -17,11 +17,11 @@
                 <h2>SAP ONLINE</h2>
             </div>
             <div class="formulario text-center">
-                <img src="images/ufrn.png" class="img-responsive div-center" width="220" height="92" />
+                <img src="./images/ufrn.png" class="img-responsive div-center" width="220" height="92" />
                 <form method="post" id="formLogin">
                     <fieldset>
                         <div>
-                            <input type="text" name="iplab" value="" placeholder="IP do Laboratório" class="form-control" required/>
+                            <input type="text" name="iplab" value="" placeholder="IP do Laboratório" class="form-control" required />
                         </div>
                         <input type="submit" name="send" value="Entrar" class="btn" />
                     </fieldset>
@@ -37,9 +37,7 @@
     <div id="header" style="display:none;">
         <header class="container div-center title text-center">
             <div class="nav-toggle toggle">
-                <p>
-                    <span>SAP ONLINE</span>
-                </p>
+                <p><span>SAP ONLINE</span></p>
                 <span class="bars bars-down"></span>
                 <span class="bars bars-up" style="display:none;"></span>
             </div>
@@ -52,25 +50,12 @@
     </div>
     <div id="screenIndex" style="display:none;">
         <div class="container div-center">
-            <table class="text-center">
-                <thead>
-                    <tr class="bg-primary">
-                        <th>Sensor</th>
-                        <th>Valor</th>
-                    </tr>
-                </thead>
-                <tbody id="allSensors" class="bg-info"></tbody>
-            </table>
-            <br /><br />
-            <table class="text-center">
-                <thead>
-                    <tr class="bg-primary">
-                        <th>Luz</th>
-                        <th>Valor</th>
-                    </tr>
-                </thead>
-                <tbody id="allLuzes" class="bg-info"></tbody>
-            </table>
+            <ul id="allLuzes" class="text-center">
+                <li><span>Carregando Dados</span></li>
+            </ul><br /><hr /><br />
+            <ul id="allSensors" class="text-center">
+                <li><span>Carregando Dados</span></li>
+            </ul>
         </div>
     </div>
     <!-- Cordova reference, this is added to your app when it's built. -->

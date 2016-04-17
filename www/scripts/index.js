@@ -10,7 +10,7 @@
 
         // TODO: Cordova has been loaded. Perform any initialization that requires Cordova here.
 
-        var myDB = window.sqlitePlugin.openDatabase({ name: "mySQLite.db" });
+        var myDB = window.sqlitePlugin.openDatabase({ name: "db.sqlite" });
         myDB.transaction(function (transaction) {
             transaction.executeSql('CREATE TABLE IF NOT EXISTS phonegap_pro (id integer primary key, ip text)', [],
             function (tx, result) {
@@ -71,12 +71,10 @@ function getAllSensors() {
             $("#allSensors").html("");
             $.each(data, function (i, field) {
                 $("#allSensors").append(
-                    "<tr><td>" + field.LOG_IDSENSOR + "</td><td>" + field.LOG_VALOR + "</td></tr>"
+                    "<li><span>" + field.LOG_VALOR + "</span></li>"
                 );
             });
-            setTimeout(function () {
-                getAllSensors();
-            }, 2000);
+            setTimeout(getAllSensors, 2000);
         },
         timeout: 5000,
     });
@@ -94,7 +92,7 @@ function getAllLuzes() {
             $.each(data, function (i, field) {
                 field.LOG_STATUS = (field.LOG_STATUS == 1) ? 'on' : '';
                 $("#allLuzes").append(
-                    "<tr class=\"" + field.LOG_STATUS + "\"><td>" + field.LOG_IDLUZ + "</td><td>" + field.LOG_VALOR + "</td></tr>"
+                    "<li class=\"" + field.LOG_STATUS + "\"><span>" + field.LOG_VALOR + "</span></li>"
                 );
             });
         },
@@ -102,20 +100,12 @@ function getAllLuzes() {
             alert("Falha na conexão!\nTente novamente.");
             document.location.href = 'index.html';
         },
+        timeout: 4000,
     });
 }
 /* Processar formulario */
 function formSubmitLogin() {
     toggle('screenLogin');
-    var len = 0;
-    myDB.transaction(function (transaction) {
-        transaction.executeSql('SELECT * FROM phonegap_pro', [], function (tx, results) {
-            len = results.rows.length, i;
-            var last_item = len - 1;
-            alert(results.rows.item(last_item).ip);
-            $('input[name=iplab]').val(results.rows.item(last_item).ip);
-        }, null);
-    });
     $('#formLogin').submit(function () {
         iplab = $('input[name=iplab]').val();
         if (iplab == '') {
@@ -125,19 +115,6 @@ function formSubmitLogin() {
             getAllSensors();
             toggle("header");
             toggle("screenIndex");
-        }
-
-        if (len == 0) {
-            myDB.transaction(function (transaction) {
-                var executeQuery = "INSERT INTO phonegap_pro (ip) VALUES (?)";
-                transaction.executeSql(executeQuery, [iplab],
-                function (tx, result) {
-                    alert('Inserted');
-                },
-                function (error) {
-                    alert('Error occurred');
-                });
-            });
         }
         return false;
     });
