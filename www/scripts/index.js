@@ -10,14 +10,19 @@
 
         // TODO: Cordova has been loaded. Perform any initialization that requires Cordova here.
 
-        var myDB = window.sqlitePlugin.openDatabase({ name: "db.sqlite" });
-        myDB.transaction(function (transaction) {
-            transaction.executeSql('CREATE TABLE IF NOT EXISTS phonegap_pro (id integer primary key, ip text)', [],
-            function (tx, result) {
-                alert("Table created successfully");
-            },
-            function (error) {
-                alert("Error occurred while creating the table.");
+        var dbSize = 3 * 1024 * 1024; // 3MB 
+        db = openDatabase("db.sql", "", "dbmanager", dbSize, function () {
+            alert('db successfully opened or created');
+        });
+        db.transaction(function (tx) {
+            tx.executeSql("CREATE TABLE IF NOT EXISTS tab_ip (id INTEGER, ip TEXT)", []);
+            tx.executeSql('SELECT * FROM tab_ip LIMIT 1', [], function (tx, res) {
+                if (JSON.stringify(res.rows[0].id) == null) {
+                    tx.executeSql("INSERT INTO tab_ip (id, ip) VALUES (?,?)", ['1', '']);
+                }
+            });
+            tx.executeSql('SELECT * FROM tab_ip LIMIT 1', [], function (tx, res) {
+                $('input[name=iplab]').val(JSON.parse(JSON.stringify(res.rows[0].ip)));
             });
         });
         checkConnection();
@@ -34,6 +39,7 @@
     };
 })();
 /* Variáveis globais */
+var db;
 var iplab = '';
 /* Toggle mobile-menu */
 $(document).ready(function () {
@@ -111,10 +117,13 @@ function formSubmitLogin() {
         if (iplab == '') {
             alert('Digite um IP válido!');
         } else {
+            db.transaction(function (tx) {
+                tx.executeSql("UPDATE tab_ip SET ip=? WHERE id=1", [iplab]);
+            });
             toggle("screenLogin");
-            getAllSensors();
             toggle("header");
             toggle("screenIndex");
+            getAllSensors();
         }
         return false;
     });
