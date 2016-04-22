@@ -9,20 +9,6 @@
         document.addEventListener('resume', onResume.bind(this), false);
 
         // TODO: Cordova has been loaded. Perform any initialization that requires Cordova here.
-
-        var dbSize = 3 * 1024 * 1024; // 3MB
-        db = openDatabase("db.sql", "", "dbmanager", dbSize);
-        db.transaction(function (tx) {
-            tx.executeSql("CREATE TABLE IF NOT EXISTS tab_ip (id INTEGER, ip TEXT)", []);
-            tx.executeSql('SELECT * FROM tab_ip LIMIT 1', [], function (tx, res) {
-                if (JSON.stringify(res.rows[0].id) == null) {
-                    tx.executeSql("INSERT INTO tab_ip (id, ip) VALUES (?,?)", ['1', '']);
-                }
-            });
-            tx.executeSql('SELECT * FROM tab_ip LIMIT 1', [], function (tx, res) {
-                $('input[name=iplab]').val(JSON.parse(JSON.stringify(res.rows[0].ip)));
-            });
-        });
         checkConnection();
     };
 
@@ -37,7 +23,6 @@
     };
 })();
 /* Variáveis globais */
-var db;
 var iplab = '';
 /* Toggle mobile-menu */
 $(document).ready(function () {
@@ -47,7 +32,7 @@ $(document).ready(function () {
         $(".bars-up").toggle();
     });
 });
-/* testar conexão */
+/* testar conexao */
 function checkConnection() {
     if (navigator.network.connection.type == Connection.NONE) {
         alert('Você está desconectado!');
@@ -87,7 +72,7 @@ function getAllSensors() {
 function getAllLuzes() {
     $.ajax({
         type: "POST",
-        url: 'http://' + iplab + '/sap/getLuzes.php',
+        url: 'http://'+ iplab +'/sap/getLuzes.php',
         crossDomain: true,
         cache: false,
         success: function (data) {
@@ -96,7 +81,7 @@ function getAllLuzes() {
             $.each(data, function (i, field) {
                 field.LOG_STATUS = (field.LOG_STATUS == 1) ? 'on' : '';
                 $("#allLuzes").append(
-                    "<li class=\"" + field.LOG_STATUS + "\"><span>" + field.LOG_VALOR + "</span></li>"
+                    "<li class=\"" + field.LOG_STATUS + "\"><span>" + field.LOG_VALOR + "s</span></li>"
                 );
             });
         },
@@ -115,9 +100,6 @@ function formSubmitLogin() {
         if (iplab == '') {
             alert('Digite um IP válido!');
         } else {
-            db.transaction(function (tx) {
-                tx.executeSql("UPDATE tab_ip SET ip=? WHERE id=1", [iplab]);
-            });
             toggle("screenLogin");
             toggle("header");
             toggle("screenIndex");
@@ -126,7 +108,7 @@ function formSubmitLogin() {
         return false;
     });
 }
-/* Tela de Erro de Conexão */
+/* Tela de Erro de Conexao */
 function screenErrorConnection() {
     $('body').addClass('error');
     toggle('screenLogin');
@@ -135,7 +117,7 @@ function screenErrorConnection() {
         toggle('errorDesconnected');
     }, 800);
 }
-/* Encerrar sessão */
+/* Encerrar sessao */
 function logout() {
     navigator.app.exitApp();
 }

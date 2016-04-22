@@ -7,8 +7,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SAP ONLINE</title>
-    <link rel="stylesheet" type="text/css" href="css/index.css" />
-    <link rel="stylesheet" type="text/css" href="css/animate.min.css" />
+    <link rel="stylesheet" type="text/css" href="./css/index.css" />
+    <link rel="stylesheet" type="text/css" href="./css/animate.min.css" />
 </head>
 <body>
     <div id="screenLogin" style="display:none;" class="animated fadeIn">
@@ -50,9 +50,15 @@
     </div>
     <div id="screenIndex" style="display:none;">
         <div class="container div-center">
+            <ul class="navigation">
+                <li class="item-menu"><a onclick="toggle('allLuzes')">LUZES</a></li>
+            </ul>
             <ul id="allLuzes" class="text-center">
                 <li><span>Carregando Dados</span></li>
-            </ul><br /><hr /><br />
+            </ul>
+            <ul class="navigation">
+                <li class="item-menu"><a onclick="toggle('allSensors')">SENSORES</a></li>
+            </ul>
             <ul id="allSensors" class="text-center">
                 <li><span>Carregando Dados</span></li>
             </ul>
