@@ -22,7 +22,7 @@
         checkConnection();
     };
 })();
-/* Variáveis globais */
+/* Variaveis globais */
 var iplab = '';
 /* Toggle mobile-menu */
 $(document).ready(function () {
@@ -32,13 +32,28 @@ $(document).ready(function () {
         $(".bars-up").toggle();
     });
 });
-/* testar conexao */
+/* Testa Conexao */
 function checkConnection() {
     if (navigator.network.connection.type == Connection.NONE) {
         alert('Você está desconectado!');
         screenErrorConnection();
     } else
-        formSubmitLogin();
+        verifySession();
+}
+/* Verifica se sessao ja foi criada*/
+function verifySession() {
+    $.ajax({
+        type: 'GET',
+        url: 'http://judsonc.ejectufrn.com.br/sap/getLog.php',
+        crossDomain: true,
+        cache: false,
+        dataType: 'text',
+        data: 'uuid=' + device.uuid,
+        success: function (result) {
+            $('input[name=iplab]').val(result);
+            formSubmitLogin();
+        },
+    });
 }
 /* Habilitar displays - Views */
 function toggle(divid) {
@@ -55,12 +70,12 @@ function getAllSensors() {
         url: 'http://' + iplab + '/sap/getSensores.php',
         crossDomain: true,
         cache: false,
-        success: function (data) {
-            var data = $.parseJSON(data);
+        success: function (result) {
+            var data = $.parseJSON(result);
             $("#allSensors").html("");
             $.each(data, function (i, field) {
                 $("#allSensors").append(
-                    "<li><span>" + field.LOG_VALOR + "</span></li>"
+                    "<li><a onclick=\"viewDetail(['Sensor','" + field.LOG_IDSENSOR + "'])\">" + field.LOG_VALOR + "</a></li>"
                 );
             });
             setTimeout(getAllSensors, 2000);
@@ -72,16 +87,17 @@ function getAllSensors() {
 function getAllLuzes() {
     $.ajax({
         type: "POST",
-        url: 'http://'+ iplab +'/sap/getLuzes.php',
+        url: 'http://' + iplab + '/sap/getLuzes.php',
         crossDomain: true,
         cache: false,
-        success: function (data) {
-            var data = $.parseJSON(data);
+        success: function (result) {
+            var data = $.parseJSON(result);
             $("#allLuzes").html("");
             $.each(data, function (i, field) {
                 field.LOG_STATUS = (field.LOG_STATUS == 1) ? 'on' : '';
                 $("#allLuzes").append(
-                    "<li class=\"" + field.LOG_STATUS + "\"><span>" + field.LOG_VALOR + "s</span></li>"
+                    "<li class=\"" + field.LOG_STATUS + "\"><a onclick=\"viewDetail(['Luz','"
+                                   + field.LOG_IDLUZ + "'])\">" + field.LOG_VALOR + "s</a></li>"
                 );
             });
         },
@@ -97,15 +113,27 @@ function formSubmitLogin() {
     toggle('screenLogin');
     $('#formLogin').submit(function () {
         iplab = $('input[name=iplab]').val();
-        if (iplab == '') {
-            alert('Digite um IP válido!');
-        } else {
-            toggle("screenLogin");
-            toggle("header");
-            toggle("screenIndex");
-            getAllSensors();
-        }
+        toggle("screenLogin");
+        toggle("header");
+        toggle("screenIndex");
+        setSession();
+        getAllSensors();
         return false;
+    });
+}
+/* Display Descricao */
+function viewDetail(data) {
+    alert('Detalhe:\n' + data[0] + '  N° ' + data[1]);
+}
+/* Salva Sessao */
+function setSession() {
+    $.ajax({
+        type: 'GET',
+        url: 'http://judsonc.ejectufrn.com.br/sap/setLog.php',
+        crossDomain: true,
+        cache: false,
+        dataType: 'text',
+        data: 'uuid=' + device.uuid + '&ip=' + iplab,
     });
 }
 /* Tela de Erro de Conexao */
